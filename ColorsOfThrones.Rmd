@@ -1,0 +1,172 @@
+---
+title: "Colors Of Thrones"
+author: "Jeena Lee"
+date: "May 20, 2016"
+output: html_document
+---
+
+This is a work in progress. These are the color schemes I have created so far. Feedback is welcome.
+
+```{r, echo=FALSE}
+library(ggplot2)
+library(gridExtra)
+# Creating dummy data for plotting.
+duck_ht <- rnorm(100, mean=20, sd=4)
+beav_ht <- rnorm(100, mean=15, sd=3)
+dwarf_ht <- rnorm(100, mean=27, sd=3)
+dog_ht <- rnorm(100, mean=25, sd=5)
+cat_ht <- rnorm(100, mean=22, sd=3/5)
+species <- c(rep("duck", 100), rep("beav", 100), rep("dwarf", 100), rep("dog", 100), rep("cat", 100))
+heights <- c(duck_ht, beav_ht, dwarf_ht, dog_ht, cat_ht)
+five_data <- data.frame(heights, species)
+heights <- heights[1:400]
+species <- species[1:400]
+four_data <- data.frame(heights, species)
+
+# Creating functions for plotting data.
+jitter_4plot <- function(c, ...) {
+  ggplot(four_data, aes(species, heights, color=species)) +
+    geom_jitter(position=position_jitter(width=0.1)) +
+    scale_color_manual(values=c)
+}
+
+jitter_5plot <- function(c, ...) {
+  ggplot(five_data, aes(species, heights, color=species)) +
+    geom_jitter(position=position_jitter(width=0.1)) +
+    scale_color_manual(values=c)
+}
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+print_palette <- function(x, ...) {
+  par(pin=c(2,4))
+  n <- length(x)
+  old <- par(mar = c(5, 0.5, 5, 0.5))
+  on.exit(par(old))
+  
+  image(1:n, 1, as.matrix(1:n), col=x,
+        ylab="", xaxt="n", yaxt="n", bty="n", xlab="")
+}
+
+dot_graph <- function(c, ...) {
+  ggplot(iris, aes(Sepal.Length, Petal.Width, color=Species)) +
+  geom_point(size=3) +
+  scale_color_manual(values=c)
+}
+
+volcano_graph <- function(c, ...) {
+  image(volcano, col=colorRampPalette(c)(50))
+}
+```
+
+
+```{r, echo=FALSE}
+# The color schemes.
+Lannister <- c("#8A0A03", "#D49E00", "#611D3A", "#423939")
+Greyjoy <- c("#20427D", "#458D9C", "#007666", "#133952", "#576769") 
+Targeryan <- c("#467D64", "#72627F", "#BFB479", "#976466", "#6E6144")
+Martell <- c("#E6B10B", "#CC6300", "#A60B00", "#651A00")
+Arryn <- c("#156679","#36AAC6", "#88E8FF", "#79695A", "#C6B4A4")
+Arryn2 <- c("#21BCD1", "#A3E5F5", "#006185", "#D2C0B2", "#AC7A72")
+Tyrell <- c("#0A6B3A", "#EBBD13", "#A62B40", "#78AB29", "#C47340")
+Tyrell2 <- c("#73B270", "#FFF0B5", "#DEF2B4", "#B26B73")
+Baratheon <- c("#2A4C2E", "#EBC52C", "#453A30", "#A6574A", "#8FAB39")
+Tully <- c("#899E9C", "#3288B0", "#EB736B", "#DEC066")
+```
+
+##Lannister: crimson, gold, wine, armor-grey
+```{r, echo=FALSE}
+print_palette(Lannister)
+volcano_graph(Lannister)
+multiplot(jitter_4plot(Lannister), dot_graph(Lannister), cols=2)
+```
+
+##Greyjoy: Cold ocean at night
+```{r, echo=FALSE}
+print_palette(Greyjoy)
+volcano_graph(Greyjoy)
+multiplot(jitter_5plot(Greyjoy), dot_graph(Greyjoy), cols=2)
+```
+
+##Targeryan: Dragon eggs, and dragon-y colors
+```{r, echo=FALSE}
+print_palette(Targeryan)
+volcano_graph(Targeryan)
+multiplot(jitter_5plot(Targeryan), dot_graph(Targeryan), cols=2)
+```
+
+##Martell: SUN!
+```{r, echo=FALSE}
+print_palette(Martell)
+volcano_graph(Martell)
+multiplot(jitter_4plot(Martell), dot_graph(Martell), cols=2)
+```
+
+##Arryn: Day sky
+```{r, echo=FALSE}
+print_palette(Arryn)
+volcano_graph(Arryn)
+multiplot(jitter_5plot(Arryn), dot_graph(Arryn), cols=2)
+```
+
+##Tyrell: Primal colors of fields and golden roses
+```{r, echo=FALSE}
+print_palette(Tyrell)
+volcano_graph(Tyrell)
+multiplot(jitter_5plot(Tyrell), dot_graph(Tyrell), cols=2)
+```
+
+##Tyrell2: Muted colors of fields and golden roses
+```{r, echo=FALSE}
+print_palette(Tyrell2)
+volcano_graph(Tyrell2)
+multiplot(jitter_4plot(Tyrell2), dot_graph(Tyrell2), cols=2)
+```
+
+##Baratheon: Hunting in the fields
+```{r, echo=FALSE}
+print_palette(Baratheon)
+volcano_graph(Baratheon)
+multiplot(jitter_5plot(Baratheon), dot_graph(Baratheon, cols=2))
+```
+
+##Tully: Silver trout leaping in the river
+```{r, echo=FALSE}
+print_palette(Tully)
+volcano_graph(Tully)
+multiplot(jitter_4plot(Tully), dot_graph(Tully), cols=2)
+```
